@@ -38,10 +38,11 @@ def evaluate_grades(data):
     """
     print("\n--- Processing Grades ---")
 
+    score_error = False
     # Check if the grades file is empty
     if not data:
         print("The grades file is empty.")
-        sys.exit(1)
+        score_error = True
 
     # Check if all scores are percentage based (0-100)
     for assignment in data:
@@ -49,16 +50,53 @@ def evaluate_grades(data):
             print(f"The {assignment['assignment']} assignment has "
                   f"an invalid score of {assignment['score']}. "
                   "Scores must be between 0 and 100.")
-            sys.exit(1)
+            score_error = True
 
-    # TODO: b) Validate total weights (Total=100, Summative=40, Formative=60)
+    if score_error:
+        sys.exit(1)
+
+    # Validate total weights (Total=100, Summative=40, Formative=60)
+    weight_error = False
+    formative_total = 0
+    summative_total = 0
+    weight_total = 0
+    for assignment in data:
+        weight_total += assignment['weight']
+        if assignment['group'] == 'Formative':
+            formative_total += assignment['weight']
+        elif assignment['group'] == 'Summative':
+            summative_total += assignment['weight']
+        else:
+            print(f"The {assignment['assignment']} assignment has an unknown "
+                  f"group {assignment['group']}. Groups must be "
+                  "Formative or Summative.")
+            weight_error = True
+
+    if formative_total != 60.0:
+        print("Formative weights do not add up to 60. They "
+              f"add up to {formative_total}.")
+        weight_error = True
+
+    if summative_total != 40.0:
+        print("Summative weights do not add up to 40. They "
+              f"add up to {summative_total}.")
+        weight_error = True
+
+    if weight_total != 100.0:
+        print("Assignment weights must add up to 100. They "
+              f"add up to {weight_total}.")
+        weight_error = True
+
+    if weight_error:
+        sys.exit(1)
+
     # TODO: c) Calculate the Final Grade and GPA
     # TODO: d) Determine Pass/Fail status (>= 50% in BOTH categories)
     # TODO: e) Check for failed formative assignments (< 50%)
     #          and determine which one(s) have the highest weight for resubmission.
     # TODO: f) Print the final decision (PASSED / FAILED) and resubmission options
-    
     pass
+
 
 if __name__ == "__main__":
     # 1. Load the data
