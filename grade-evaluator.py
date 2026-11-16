@@ -2,6 +2,7 @@ import csv
 import sys
 import os
 
+
 def load_csv_data():
     """
     Prompts the user for a filename, checks if it exists,
@@ -30,6 +31,7 @@ def load_csv_data():
     except Exception as e:
         print(f"An error occurred while reading the file: {e}")
         sys.exit(1)
+
 
 def evaluate_grades(data):
     """
@@ -102,7 +104,6 @@ def evaluate_grades(data):
 
     final_grade = formative_total + summative_total
     gpa = (final_grade / 100) * 5.0
-    print(f"The final grade is {final_grade:.2f} and the GPA is {gpa:.4f}.")
 
     # Determine Pass/Fail status (>= 50% in BOTH categories)
     if (formative_total >= (formative_weight / 2) and
@@ -127,16 +128,18 @@ def evaluate_grades(data):
 
     for assignment in failed_assignments:
         if assignment['weight'] == max_weight:
-            resubmission.append(assignment)
+            resubmission.append(assignment['assignment'])
+
+    # Print the final decision (PASSED / FAILED) and resubmission options
+    print(f"Formatives (60): {formative_total:.2f}\n"
+          f"Summatives (40): {summative_total:.2f}\n"
+          f"GPA: {gpa:.4f}\n"
+          f"Status: {student_status}")
 
     if not resubmission:
-        print("No assignments are available for resubmission.")
+        print("Available for resubmission: None")
     else:
-        for assignment in resubmission:
-            print(f"The {assignment['assignment']} assignment "
-                  "is available for resubmission.")
-
-    # TODO: f) Print the final decision (PASSED / FAILED) and resubmission options
+        print(f"Available for resubmission: {', '.join(resubmission)}")
 
 
 if __name__ == "__main__":
