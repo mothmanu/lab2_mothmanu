@@ -4,17 +4,17 @@ import os
 
 def load_csv_data():
     """
-    Prompts the user for a filename, checks if it exists, 
+    Prompts the user for a filename, checks if it exists,
     and extracts all fields into a list of dictionaries.
     """
     filename = input("Enter the name of the CSV file to process (e.g., grades.csv): ")
-    
+
     if not os.path.exists(filename):
         print(f"Error: The file '{filename}' was not found.")
         sys.exit(1)
-        
+
     assignments = []
-    
+
     try:
         with open(filename, mode='r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
@@ -104,7 +104,13 @@ def evaluate_grades(data):
     gpa = (final_grade / 100) * 5.0
     print(f"The final grade is {final_grade:.2f} and the GPA is {gpa:.4f}.")
 
-    # TODO: d) Determine Pass/Fail status (>= 50% in BOTH categories)
+    # Determine Pass/Fail status (>= 50% in BOTH categories)
+    if (formative_total >= (formative_weight / 2) and
+            summative_total >= (summative_weight / 2)):
+        student_status = 'PASSED'
+    else:
+        student_status = 'FAILED'
+
     # TODO: e) Check for failed formative assignments (< 50%)
     #          and determine which one(s) have the highest weight for resubmission.
     # TODO: f) Print the final decision (PASSED / FAILED) and resubmission options
@@ -114,7 +120,6 @@ def evaluate_grades(data):
 if __name__ == "__main__":
     # 1. Load the data
     course_data = load_csv_data()
-    
+
     # 2. Process the features
     evaluate_grades(course_data)
-    
