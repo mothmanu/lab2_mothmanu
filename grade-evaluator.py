@@ -57,29 +57,29 @@ def evaluate_grades(data):
 
     # Validate total weights (Total=100, Summative=40, Formative=60)
     weight_error = False
-    formative_total = 0
-    summative_total = 0
+    formative_weight = 0
+    summative_weight = 0
     weight_total = 0
     for assignment in data:
         weight_total += assignment['weight']
         if assignment['group'] == 'Formative':
-            formative_total += assignment['weight']
+            formative_weight += assignment['weight']
         elif assignment['group'] == 'Summative':
-            summative_total += assignment['weight']
+            summative_weight += assignment['weight']
         else:
             print(f"The {assignment['assignment']} assignment has an unknown "
                   f"group {assignment['group']}. Groups must be "
                   "Formative or Summative.")
             weight_error = True
 
-    if formative_total != 60.0:
+    if formative_weight != 60.0:
         print("Formative weights do not add up to 60. They "
-              f"add up to {formative_total}.")
+              f"add up to {formative_weight}.")
         weight_error = True
 
-    if summative_total != 40.0:
+    if summative_weight != 40.0:
         print("Summative weights do not add up to 40. They "
-              f"add up to {summative_total}.")
+              f"add up to {summative_weight}.")
         weight_error = True
 
     if weight_total != 100.0:
@@ -90,7 +90,20 @@ def evaluate_grades(data):
     if weight_error:
         sys.exit(1)
 
-    # TODO: c) Calculate the Final Grade and GPA
+    # Calculate the Final Grade and GPA
+    formative_total = 0
+    summative_total = 0
+    for assignment in data:
+        weighted_score = (assignment['score'] / 100) * assignment['weight']
+        if assignment['group'] == 'Formative':
+            formative_total += weighted_score
+        elif assignment['group'] == 'Summative':
+            summative_total += weighted_score
+
+    final_grade = formative_total + summative_total
+    gpa = (final_grade / 100) * 5.0
+    print(f"The final grade is {final_grade:.2f} and the GPA is {gpa:.4f}.")
+
     # TODO: d) Determine Pass/Fail status (>= 50% in BOTH categories)
     # TODO: e) Check for failed formative assignments (< 50%)
     #          and determine which one(s) have the highest weight for resubmission.
