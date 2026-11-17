@@ -27,9 +27,10 @@ def load_csv_data():
                         print(f"The file is missing the '{column}' column.")
                         sys.exit(1)
             # Conversion check
+            row_error = False
             for row in reader:
                 try:
-                    score = float(row['score']),
+                    score = float(row['score'])
                     weight = float(row['weight'])
                 except (ValueError, TypeError):
                     print(f"Line {reader.line_num} ({row['assignment']}): score "
@@ -47,7 +48,7 @@ def load_csv_data():
             if row_error:
                 sys.exit(1)
         return assignments
-        
+
     except Exception as e:
         print(f"An error occurred while reading the file: {e}")
         sys.exit(1)
