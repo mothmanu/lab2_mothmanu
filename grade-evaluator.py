@@ -30,6 +30,7 @@ def load_csv_data():
             row_error = False
             for row in reader:
                 try:
+                    # Convert numeric fields to floats for calculations
                     score = float(row['score'])
                     weight = float(row['weight'])
                 except (ValueError, TypeError):
@@ -38,7 +39,7 @@ def load_csv_data():
                           "is not a number.")
                     row_error = True
                     continue
-                # Convert numeric fields to floats for calculations
+
                 assignments.append({
                     'assignment': row['assignment'],
                     'group': row['group'],
