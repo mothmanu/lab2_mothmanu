@@ -19,15 +19,35 @@ def load_csv_data():
     try:
         with open(filename, mode='r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
+
+            # Header check
+            if reader.fieldnames:
+                for column in ['assignment', 'group', 'score', 'weight']:
+                    if column not in reader.fieldnames:
+                        print(f"The file is missing the '{column}' column.")
+                        sys.exit(1)
+            # Conversion check
             for row in reader:
+                try:
+                    score = float(row['score']),
+                    weight = float(row['weight'])
+                except (ValueError, TypeError):
+                    print(f"Line {reader.line_num} ({row['assignment']}): score "
+                          f"'{row['score']}' or weight '{row['weight']}' "
+                          "is not a number.")
+                    row_error = True
+                    continue
                 # Convert numeric fields to floats for calculations
                 assignments.append({
                     'assignment': row['assignment'],
                     'group': row['group'],
-                    'score': float(row['score']),
-                    'weight': float(row['weight'])
-                })
+                    'score': score,
+                    'weight': weight})
+
+            if row_error:
+                sys.exit(1)
         return assignments
+        
     except Exception as e:
         print(f"An error occurred while reading the file: {e}")
         sys.exit(1)
@@ -48,7 +68,9 @@ def evaluate_grades(data):
 
     # Check if all scores are percentage based (0-100)
     for assignment in data:
-        if assignment['score'] < 0 or assignment['score'] > 100:
+        if 0 <= assignment['score'] <= 100:
+            pass
+        else:
             print(f"The {assignment['assignment']} assignment has "
                   f"an invalid score of {assignment['score']}. "
                   "Scores must be between 0 and 100.")
